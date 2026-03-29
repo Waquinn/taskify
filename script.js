@@ -114,12 +114,12 @@ function formatDateDisplay(dateStr) {
 const defaultTasks = [
     {
         id: 1,
-        title: '👋 Welcome to Taskify! Add your first task above.',
+        title: 'Welcome to Taskify! Stay organized. Stay Focused. Get things Done.',
         priority: 'easy',
         status: 'todo',
         deadline: getTodayISO(),
         completed: false,
-        notes: 'Taskify helps you organize tasks, track your academic XP, log your daily mood, and use the Decision Wheel when you\'re not sure what to work on. Start by adding your own tasks and setting your name in the Profile page. Good luck! 🚀'
+        notes: 'Manage your tasks across all pages. Click on a task for details and notes. Use the wheel to pick a random task!'
     }
 ];
 
@@ -1679,13 +1679,6 @@ function updateDashboardStats() {
     // Update Academic XP Bar
     updateXPBar(totalXP);
     
-    // Update Focus Score
-    const focusScore = calculateFocusScore();
-    const focusScoreEl = document.querySelector('.text-secondary.font-headline.font-extrabold.text-2xl');
-    if (focusScoreEl) {
-        focusScoreEl.textContent = focusScore + '%';
-    }
-
     // Update Tasks Today count
     updateTasksTodayCount();
 }
@@ -1711,45 +1704,15 @@ function updateXPBar(totalXP) {
     }
 }
 
-// Calculate Focus Score (0–100)
-// Formula: weighted blend of
-//   - overall completion rate (50%)
-//   - this-week completion rate (30%)
-//   - hard-task completion bonus (20%)
-function calculateFocusScore(taskList = tasks) {
-    if (taskList.length === 0) return 0;
-
-    // Overall completion rate
-    const total = taskList.length;
-    const completed = taskList.filter(t => t.completed).length;
-    const overallRate = completed / total;
-
-    // Weekly completion rate
-    const weeklyAll = taskList.filter(t => {
-        if (!t.deadline) return false;
-        const d = new Date(t.deadline);
-        const weekAgo = new Date();
-        weekAgo.setDate(weekAgo.getDate() - 7);
-        return d >= weekAgo;
-    });
-    const weeklyDone = weeklyAll.filter(t => t.completed).length;
-    const weeklyRate = weeklyAll.length > 0 ? weeklyDone / weeklyAll.length : overallRate;
-
-    // Hard task bonus
-    const hardTotal = taskList.filter(t => t.priority === 'hard').length;
-    const hardDone = taskList.filter(t => t.priority === 'hard' && t.completed).length;
-    const hardRate = hardTotal > 0 ? hardDone / hardTotal : overallRate;
-
-    const score = (overallRate * 0.5 + weeklyRate * 0.3 + hardRate * 0.2) * 100;
-    return Math.round(Math.min(score, 100));
-}
+// Update Tasks Today count
+function updateTasksTodayCount() {
     const countEl = document.getElementById('tasks-today-count');
     if (!countEl) return;
     
     const today = getTodayISO();
     const todayTasks = tasks.filter(t => t.deadline === today && !t.completed).length;
     countEl.textContent = todayTasks.toString().padStart(2, '0');
-
+}
 
 // ============================================
 // PROFILE SYSTEM
@@ -1757,8 +1720,8 @@ function calculateFocusScore(taskList = tasks) {
 
 // Default profile
 const defaultProfile = {
-    name: 'Your Name',
-    avatar: 'https://ui-avatars.com/api/?name=User&background=9396ff&color=ffffff&size=128&bold=true&rounded=true'
+    name: 'Mike Joequin Badillo',
+    avatar: 'https://drive.google.com/uc?export=view&id=1AECiq_Z_m529xJhhvwaDDR2fPeW4zWkn'
 };
 
 // Load profile from localStorage
