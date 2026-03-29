@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Taskify | Tasks</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus_Jakarta_Sans:wght@600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-background text-on-surface antialiased min-h-screen">
+    <!-- TopNavBar -->
+    <header class="fixed top-0 w-full z-50 bg-slate-50/80 backdrop-blur-xl flex justify-between items-center px-6 py-4 border-b border-surface-container">
+        <div class="flex items-center gap-4">
+            <a href="index.html" class="text-2xl font-bold tracking-tighter text-indigo-600 font-['Plus_Jakarta_Sans']">Taskify</a>
+        </div>
+        <div class="flex items-center gap-6">
+            <div class="hidden md:flex items-center gap-8">
+                <a class="text-slate-500 font-medium hover:text-indigo-500 transition-colors" href="index.html">Home</a>
+                <a class="text-indigo-600 font-bold border-b-2 border-indigo-600" href="tasks.html">Tasks</a>
+                <a class="text-slate-500 font-medium hover:text-indigo-500 transition-colors" href="calendar.html">Calendar</a>
+                <a class="text-slate-500 font-medium hover:text-indigo-500 transition-colors" href="profile.html">Profile</a>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="profile.html" class="relative z-[1001]">
+                    <img alt="Student Profile Avatar" class="w-10 h-10 rounded-full object-cover ring-2 ring-primary-container" src="https://drive.google.com/file/d/1AECiq_Z_m529xJhhvwaDDR2fPeW4zWkn/view?usp=drive_link"/>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 pt-24 pb-8 px-4 gap-2 bg-gradient-to-r from-slate-100 to-slate-50 z-40">
+        <div class="px-4 mb-6">
+            <h2 class="text-xl font-black text-slate-900">Task Manager</h2>
+            <p class="text-xs text-on-surface-variant font-medium uppercase tracking-wider">Your Virtual Secretary</p>
+        </div>
+        <nav class="flex-1 flex flex-col gap-1">
+            <a id="filter-all" class="filter-btn flex items-center gap-3 px-4 py-3 bg-white text-indigo-600 rounded-xl shadow-sm font-semibold transition-transform duration-200 hover:scale-[1.02]" href="#">
+                <span class="material-symbols-outlined" data-icon="checklist" style="font-variation-settings: 'FILL' 1;">checklist</span>
+                <span>All Tasks</span>
+            </a>
+            <a id="filter-priority" class="filter-btn flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-200/50 rounded-xl font-semibold transition-transform duration-200 hover:scale-[1.02]" href="#">
+                <span class="material-symbols-outlined" data-icon="priority_high">priority_high</span>
+                <span>High Priority</span>
+            </a>
+           <a id="filter-due-today" class="filter-btn flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-200/50 rounded-xl font-semibold transition-transform duration-200 hover:scale-[1.02]" href="#">
+                <span class="material-symbols-outlined" data-icon="today">today</span>
+                <span>Due Today</span>
+            </a>
+        </nav>
+        <div class="mt-auto flex flex-col gap-1">
+            <button onclick="document.getElementById('quick-add-input').focus()" class="w-full bg-primary text-on-primary py-3 rounded-xl font-bold flex items-center justify-center gap-2 mb-4 hover:opacity-90 transition-opacity shadow-lg shadow-primary/20">
+                <span class="material-symbols-outlined" data-icon="add">add</span>
+                <span>Quick Add Task</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="md:ml-64 pt-24 pb-20 md:pb-8 px-6 lg:px-8 transition-all duration-300">
+        <!-- Header Section -->
+        <header class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+                <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-2 text-on-surface font-headline">Your Missions</h1>
+                <div class="flex items-center gap-3">
+                    <span class="active-tasks-badge px-3 py-1 bg-primary-container text-on-primary-container rounded-full text-sm font-bold">0 Active Tasks</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Quick Add Inline -->
+        <form id="task-form" class="mb-10 bg-surface-container-low p-2 rounded-2xl group focus-within:bg-white focus-within:shadow-xl transition-all duration-300 ring-1 ring-transparent focus-within:ring-primary/10">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                <div class="p-3 text-primary shrink-0">
+                    <span class="material-symbols-outlined" data-icon="add_task">add_task</span>
+                </div>
+                <input id="quick-add-input" class="quick-add-input flex-1 bg-transparent border-none focus:ring-0 text-on-surface placeholder:text-on-surface-variant/60 font-medium py-3 min-w-0" placeholder="Add a new mission" type="text"/>
+            </div>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 px-2 pb-2">
+                <select id="task-priority" class="bg-transparent border border-outline-variant rounded-lg px-3 py-2 text-sm font-medium text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20">
+                    <option value="easy" selected>Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
+                <input id="task-deadline" type="date" class="bg-transparent border border-outline-variant rounded-lg px-3 py-2 text-sm font-medium text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20"/>
+                <button type="submit" class="px-4 py-2 bg-primary text-white rounded-xl font-bold items-center gap-2 hover:opacity-90 transition-opacity flex whitespace-nowrap justify-center sm:justify-start">
+                    <span>Deploy Task</span>
+                    <span class="material-symbols-outlined text-sm" data-icon="send">send</span>
+                </button>
+            </div>
+        </form>
+
+        <!-- Task List -->
+        <div id="task-list" class="space-y-4">
+            <div class="flex items-center gap-4 mb-6">
+                <span class="text-xs font-black uppercase tracking-[0.2em] text-on-surface-variant">Tasks</span>
+                <div class="flex-1 h-px bg-surface-container"></div>
+            </div>
+            <div id="tasks-container" class="space-y-4"></div>
+        </div>
+
+       <!-- Empty State -->
+        <div id="empty-state" class="hidden flex-1 flex flex-col items-center justify-center gap-6 text-center px-8 py-12">
+            <div class="w-24 h-24 rounded-full bg-primary-container/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-4xl text-primary" data-icon="checklist">checklist</span>
+            </div>
+            <h3 class="text-2xl font-black text-on-surface leading-tight mb-2 font-headline">No Tasks Yet</h3>
+            <p class="text-on-surface-variant text-lg max-w-md">Your task list is empty. Add your first task to get started on your productivity journey.</p>
+            <button class="px-6 py-3 bg-primary text-white rounded-xl font-bold items-center gap-2 hover:opacity-90 transition-opacity">
+                <span>Add Your First Task</span>
+            </button>
+        </div>
+    </main>
+
+    <!-- Task Detail Side Panel (Drawer) -->
+    <aside id="task-detail-panel" class="fixed top-0 right-0 h-full w-full md:w-[400px] bg-white border-l border-surface-container z-50 flex-col shadow-[-10px_0_30px_rgba(0,0,0,0.1)] transform translate-x-full transition-transform duration-300 ease-in-out">
+        <div class="absolute top-6 right-6 z-50">
+            <button id="close-panel-btn" onclick="closeDetailPanel()" class="p-2 hover:bg-surface-container rounded-full text-on-surface-variant transition-colors">
+                <span class="material-symbols-outlined" data-icon="close">close</span>
+            </button>
+        </div>
+        <div class="pt-20 flex-1 overflow-y-auto px-6 md:px-8 py-4 no-scrollbar">
+            <!-- Header Section -->
+            <div class="mb-8">
+                <div class="flex gap-2 mb-4 flex-wrap">
+                    <span id="panel-priority-badge" class="inline-flex px-3 py-1 bg-error-container/10 text-error font-bold text-xs rounded-full uppercase tracking-wider">Hard</span>
+                    <span id="panel-status-badge" class="inline-flex px-3 py-1 bg-tertiary-container/10 text-on-tertiary-container font-bold text-xs rounded-full uppercase tracking-wider">In Progress</span>
+                </div>
+                <h2 id="panel-task-title" class="text-xl md:text-2xl font-black text-on-surface leading-tight mb-4 font-headline">Task Title</h2>
+                <div class="space-y-3">
+                    <div class="flex items-start gap-3 text-on-surface-variant font-medium">
+                        <span class="material-symbols-outlined text-primary shrink-0 mt-0.5" data-icon="calendar_month">calendar_month</span>
+                        <div class="text-sm flex-1 min-w-0">
+                            <p class="text-[10px] uppercase tracking-widest text-on-surface-variant/60 font-black mb-1">Deadline</p>
+                            <input id="panel-deadline" type="date" class="w-full bg-surface-container-low border-none rounded-lg px-3 py-2 text-sm font-medium text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes Section -->
+            <div class="mb-8">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="material-symbols-outlined text-on-surface-variant" data-icon="notes" style="font-size: 20px">notes</span>
+                    <h3 class="text-sm font-black uppercase tracking-widest text-on-surface-variant">Task Notes</h3>
+                </div>
+                <textarea id="panel-notes" class="w-full bg-surface-container-low border-none rounded-2xl p-4 text-sm font-medium text-on-surface placeholder:text-on-surface-variant/40 focus:ring-2 focus:ring-primary/20 min-h-[150px] transition-all resize-none" placeholder="Add specific requirements, links to documentation, or brainstorm ideas..."></textarea>
+            </div>
+        </div>
+
+        <!-- Panel Footer -->
+        <div class="px-6 md:px-8 py-4 border-t border-surface-container flex gap-3">
+            <button id="save-btn" onclick="saveTaskDetails()" class="flex-1 bg-primary text-on-primary font-bold py-3 rounded-xl shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity">Save</button>
+            <button id="close-btn" onclick="closeDetailPanel()" class="flex-1 bg-surface-container-high text-on-surface font-bold py-3 rounded-xl hover:bg-surface-container-highest transition-colors">Close</button>
+        </div>
+    </aside>
+    
+    <!-- Overlay Background -->
+    <div id="panel-overlay" onclick="closeDetailPanel()" class="fixed top-0 right-0 h-full w-full md:w-[400px] bg-white z-50 transform translate-x-full transition-transform duration-300"></div>
+
+    <!-- BottomNavBar (Mobile) -->
+    <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-6 pb-8 pt-4 md:hidden bg-white/90 backdrop-blur-2xl rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(99,102,241,0.06)] border-t border-slate-100">
+        <a class="flex flex-col items-center justify-center text-slate-400" href="index.html">
+            <span class="material-symbols-outlined" data-icon="home">home</span>
+            <span class="text-[10px] font-medium uppercase tracking-widest mt-1">Home</span>
+        </a>
+        <a class="flex flex-col items-center justify-center bg-indigo-50 text-indigo-600 rounded-2xl px-5 py-2 scale-110" href="tasks.html">
+            <span class="material-symbols-outlined" data-icon="checklist" style="font-variation-settings: 'FILL' 1;">checklist</span>
+            <span class="text-[10px] font-medium uppercase tracking-widest mt-1">Tasks</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-slate-400" href="calendar.html">
+            <span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+            <span class="text-[10px] font-medium uppercase tracking-widest mt-1">Calendar</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-slate-400" href="profile.html">
+            <span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+            <span class="text-[10px] font-medium uppercase tracking-widest mt-1">Profile</span>
+        </a>
+    </nav>
+
+    <!-- Floating Action Button (Mobile) -->
+    <button onclick="document.getElementById('quick-add-input').focus()" class="md:hidden fixed bottom-28 right-6 w-14 h-14 bg-primary text-on-primary rounded-full shadow-lg flex items-center justify-center z-40 transition-transform active:scale-90">
+        <span class="material-symbols-outlined" data-icon="add">add</span>
+    </button>
+
+    <script src="script.js"></script>
+</body>
+</html>
