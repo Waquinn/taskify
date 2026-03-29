@@ -110,6 +110,66 @@ function formatDateDisplay(dateStr) {
     }
 }
 
+function getProfile() {
+    const stored = localStorage.getItem('profileOS');
+    
+    if (stored) {
+        return JSON.parse(stored);
+    }
+
+    return {
+        name: '',
+        avatar: 'https://ui-avatars.com/api/?name=User&background=9396ff&color=ffffff'
+    };
+}
+
+function initProfilePage() {
+    const nameInput = document.getElementById('profile-name-input');
+    const avatarPreview = document.getElementById('profile-avatar-preview');
+    const form = document.getElementById('profile-form');
+
+    if (!nameInput || !form) return;
+
+    const profile = getProfile();
+
+    // Load profile
+    nameInput.value = profile.name || '';
+    if (avatarPreview) avatarPreview.src = profile.avatar;
+
+    // Save on submit
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const updatedProfile = {
+            name: nameInput.value.trim(),
+            avatar: avatarPreview.src
+        };
+
+        saveProfile(updatedProfile);
+
+        alert('Profile saved!');
+    });
+}
+
+function applyProfileGlobally() {
+    const profile = getProfile();
+
+    const nameEl = document.getElementById('dashboard-profile-name');
+    const avatarEl = document.getElementById('dashboard-profile-avatar');
+
+    if (nameEl) {
+        nameEl.textContent = profile.name || 'Welcome!';
+    }
+
+    if (avatarEl) {
+        avatarEl.src = profile.avatar;
+    }
+}
+
+function saveProfile(profile) {
+    localStorage.setItem('profileOS', JSON.stringify(profile));
+}
+
 // Default tasks for initialization
 const defaultTasks = [
     {
