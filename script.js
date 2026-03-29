@@ -1792,8 +1792,8 @@ function updateTasksTodayCount() {
 
 // Default profile
 const defaultProfile = {
-    name: 'Mike Joequin Badillo',
-    avatar: 'https://drive.google.com/uc?export=view&id=1AECiq_Z_m529xJhhvwaDDR2fPeW4zWkn'
+    name: '',
+    avatar: 'https://ui-avatars.com/api/?name=User&background=9396ff&color=ffffff'
 };
 
 // Load profile from localStorage
@@ -1820,7 +1820,9 @@ function applyProfileGlobally() {
     // Update dashboard profile name
     const dashboardName = document.getElementById('dashboard-profile-name');
     if (dashboardName) {
-        dashboardName.textContent = profile.name;
+        dashboardName.textContent = profile.name && profile.name.trim() !== '' 
+    ? profile.name 
+    : 'Welcome!';
     }
     
     // Update dashboard avatar
@@ -1874,7 +1876,7 @@ function initProfilePage() {
     profileForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const updatedProfile = {
-            name: nameInput.value || defaultProfile.name,
+            name: nameInput.value.trim(),
             avatar: avatarImg.src || defaultProfile.avatar
         };
         saveProfile(updatedProfile);
