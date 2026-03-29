@@ -116,7 +116,7 @@ const defaultTasks = [
         id: 1,
         title: 'Welcome to Taskify! Stay organized. Stay Focused. Get things Done.',
         priority: 'easy',
-        status: 'todo',
+        status: 'In Progress',
         deadline: getTodayISO(),
         completed: false,
         notes: 'Manage your tasks across all pages. Click on a task for details and notes. Use the wheel to pick a random task!'
