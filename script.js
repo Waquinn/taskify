@@ -111,10 +111,20 @@ function formatDateDisplay(dateStr) {
 }
 
 function getProfile() {
-    const stored = localStorage.getItem('profileOS');
-    
-    if (stored) {
-        return JSON.parse(stored);
+    try {
+        const stored = localStorage.getItem('profileOS');
+
+        if (stored) {
+            const parsed = JSON.parse(stored);
+
+            return {
+                name: parsed.name || '',
+                avatar: parsed.avatar || 'https://ui-avatars.com/api/?name=User&background=9396ff&color=ffffff'
+            };
+        }
+    } catch (e) {
+        console.log('Corrupted profile data, resetting...');
+        localStorage.removeItem('profileOS');
     }
 
     return {
@@ -157,9 +167,11 @@ function applyProfileGlobally() {
     const nameEl = document.getElementById('dashboard-profile-name');
     const avatarEl = document.getElementById('dashboard-profile-avatar');
 
-    if (nameEl) {
-        nameEl.textContent = profile.name || 'Welcome!';
-    }
+   if (nameEl) {
+    nameEl.textContent = profile.name && profile.name.trim() !== '' 
+        ? profile.name 
+        : 'Welcome!';
+}
 
     if (avatarEl) {
         avatarEl.src = profile.avatar;
