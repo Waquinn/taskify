@@ -232,6 +232,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Update dashboard stats if on home page
     updateDashboardStats();
+
+    //Quote of the day
+    loadQuote();
     
     // Update Tasks Today count
     updateTasksTodayCount();
@@ -1829,6 +1832,20 @@ function applyProfileGlobally() {
     const dashboardAvatar = document.getElementById('dashboard-profile-avatar');
     if (dashboardAvatar) {
         dashboardAvatar.src = profile.avatar;
+    }
+}
+
+async function loadQuote() {
+    try {
+        const res = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://zenquotes.io/api/random'));
+        const data = await res.json();
+        const parsed = JSON.parse(data.contents);
+
+        document.getElementById('quote-text').textContent =
+        `"${parsed[0].q}" — ${parsed[0].a}`;
+    } catch (error) {
+        document.getElementById('quote-text').textContent =
+            "Stay focused and keep going 💪";
     }
 }
 
