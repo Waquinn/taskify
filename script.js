@@ -494,6 +494,9 @@ function initTaskManager() {
     
     // Set default filter to show all tasks
     currentFilter = 'all';
+
+    // ── NEW: Restrict deadline input to today or later ──
+    setMinDate();
     
     // Setup event listeners
     // Handle quick add form submission
@@ -545,6 +548,34 @@ function initTaskManager() {
     updateTaskCount();
 }
 
+// ── NEW: Set the minimum selectable date to today on all date inputs ──
+function setMinDate() {
+    const today = getTodayISO();
+
+    // Main task form deadline input
+    const taskDeadline = document.getElementById('task-deadline');
+    if (taskDeadline) {
+        taskDeadline.min = today;
+        // If someone already typed a past date somehow, clear it
+        taskDeadline.addEventListener('change', () => {
+            if (taskDeadline.value && taskDeadline.value < today) {
+                taskDeadline.value = today;
+            }
+        });
+    }
+
+    // Detail panel deadline input (editing an existing task)
+    const panelDeadline = document.getElementById('panel-deadline');
+    if (panelDeadline) {
+        panelDeadline.min = today;
+        panelDeadline.addEventListener('change', () => {
+            if (panelDeadline.value && panelDeadline.value < today) {
+                panelDeadline.value = today;
+            }
+        });
+    }
+}
+
 // Update home page tasks
 function updateHomeTasks() {
     const homeTasksContainer = document.getElementById('tasks-container');
@@ -566,7 +597,8 @@ function setupFilterButtons() {
     const filterAll = document.getElementById('filter-all');
     const filterPriority = document.getElementById('filter-priority');
     const filterDueToday = document.getElementById('filter-due-today');
-    
+    const filterFinished = document.getElementById('filter-finished'); // ── NEW
+
     if (filterAll) {
         filterAll.addEventListener('click', (e) => {
             e.preventDefault();
@@ -585,6 +617,14 @@ function setupFilterButtons() {
         filterDueToday.addEventListener('click', (e) => {
             e.preventDefault();
             filterTasks('due-today');
+        });
+    }
+
+    // ── NEW: Finished Tasks filter ──
+    if (filterFinished) {
+        filterFinished.addEventListener('click', (e) => {
+            e.preventDefault();
+            filterTasks('finished');
         });
     }
 }
@@ -639,6 +679,19 @@ function getFilteredTasks() {
                     .sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
             }
             break;
+
+        // ── NEW: Finished Tasks filter ──
+        case 'finished':
+            // Show only completed tasks, most recently completed first
+            filteredTasks = filteredTasks
+                .filter(t => t.completed)
+                .sort((a, b) => {
+                    const dateA = a.completedAt ? new Date(a.completedAt) : new Date(0);
+                    const dateB = b.completedAt ? new Date(b.completedAt) : new Date(0);
+                    return dateB - dateA; // newest completed first
+                });
+            break;
+
         case 'all':
         default:
             // Show all tasks including completed, sorted by priority
@@ -665,6 +718,21 @@ function renderTasks() {
     
     // Get filtered tasks using the new filter logic
     let filteredTasks = getFilteredTasks();
+
+    // ── NEW: Show a friendly empty state for Finished Tasks ──
+    if (filteredTasks.length === 0 && currentFilter === 'finished') {
+        tasksContainer.innerHTML = `
+            <div class="flex flex-col items-center justify-center gap-4 text-center py-16">
+                <div class="w-16 h-16 rounded-full bg-primary-container/10 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-3xl text-primary" style="font-variation-settings:'FILL' 1;">task_alt</span>
+                </div>
+                <h3 class="text-xl font-black text-on-surface font-headline">No Finished Tasks Yet</h3>
+                <p class="text-on-surface-variant max-w-sm">Complete a task to see it here. Keep going — you've got this!</p>
+            </div>
+        `;
+        updateTaskCount();
+        return;
+    }
     
     // Render tasks
     filteredTasks.forEach(task => {
@@ -968,7 +1036,13 @@ function updateTaskCount() {
     
     const activeTasksBadge = document.querySelector('.active-tasks-badge');
     if (activeTasksBadge) {
-        activeTasksBadge.textContent = `${remaining} Active Tasks`;
+        // For the Finished Tasks view, show how many are finished
+        if (currentFilter === 'finished') {
+            const finishedCount = document.querySelectorAll('.task-card.task-completed').length;
+            activeTasksBadge.textContent = `${finishedCount} Finished Tasks`;
+        } else {
+            activeTasksBadge.textContent = `${remaining} Active Tasks`;
+        }
     }
 }
 
@@ -1835,6 +1909,7 @@ function applyProfileGlobally() {
     }
 }
 
+//API call to get quote of the day
 async function loadQuote() {
     try {
         const res = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://zenquotes.io/api/random'));
@@ -2054,4 +2129,3 @@ window.saveMood = saveMood;
 window.renderMoodHistory = renderMoodHistory;
 window.getActiveTasks = getActiveTasks;
 window.updateTasksTodayCount = updateTasksTodayCount;
-
